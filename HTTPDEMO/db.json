@@ -1,0 +1,25 @@
+{
+  "products": [
+    {
+      "id": "1",
+      "name": "Laptop",
+      "description": "Laptop DP100 model",
+      "price": 950,
+      "category":"Electronics"
+    },
+    {
+      "id": "2",
+      "name": "Polo T shirt",
+      "description": "T Shirt for summers",
+      "price": 1200,
+      "category":"Clothing"
+    },
+    {
+      "id": "3",
+      "name": "The great Book",
+      "description": "Fiction book",
+      "price": 450,
+      "category":"Books"
+    }
+  ]
+}

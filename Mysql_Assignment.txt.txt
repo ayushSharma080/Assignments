@@ -1,0 +1,121 @@
+CREATE TABLE categories (
+    category_id SERIAL PRIMARY KEY,
+    category_name VARCHAR(50) NOT NULL UNIQUE,
+    description TEXT
+);
+ 
+ 
+ 
+CREATE TABLE suppliers (
+    supplier_id SERIAL PRIMARY KEY,
+    supplier_name VARCHAR(100) NOT NULL,
+    contact_email VARCHAR(100),
+    phone VARCHAR(20)
+);
+ 
+ 
+ 
+CREATE TABLE products (
+    product_id SERIAL PRIMARY KEY,
+    product_name VARCHAR(100) NOT NULL,
+    category_id INT REFERENCES categories(category_id) ,
+    supplier_id INT REFERENCES suppliers(supplier_id) ,
+    price NUMERIC(10, 2) CHECK (price >= 0),
+    stock_quantity INT CHECK (stock_quantity >= 0),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+ 
+
+ 
+INSERT INTO categories (category_name, description) VALUES
+('Electronics', 'Devices and gadgets'),
+('Books', 'Printed and digital books'),
+('Clothing', 'Apparel and accessories');
+ 
+ 
+INSERT INTO suppliers (supplier_name, contact_email, phone) VALUES
+('Best Supplier Inc.', 'contact@bestsupplier.com', '123-456-7890'),
+('Global Goods', 'sales@globalgoods.com', '987-654-3210');
+ 
+ 
+INSERT INTO products (product_name, category_id, supplier_id, price, stock_quantity) VALUES
+('Smartphone Model X', 1, 1, 699.99, 50),
+('Wireless Headphones', 1, 2, 199.99, 30),
+('Mystery Novel', 2, 1, 14.99, 100),
+('T-shirt Classic', 3, 2, 9.99, 200),
+('E-reader', 1, 1, 129.99, 10);
+
+ALTER TABLE products
+ADD COLUMN discount_percent NUMERIC(5,2) DEFAULT 0;
+
+UPDATE products
+SET price = price * 0.85
+WHERE category_id = (
+    SELECT category_id
+    FROM categories
+    WHERE category_name = 'Electronics'
+);
+
+SELECT p.product_name, c.category_name
+FROM products p
+INNER JOIN categories c
+ON p.category_id = c.category_id;
+
+
+SELECT p.product_name, c.category_name
+FROM products p
+LEFT JOIN categories c
+ON p.category_id = c.category_id;
+
+SELECT p.product_name, s.supplier_name
+FROM products p
+LEFT JOIN suppliers s
+ON p.supplier_id = s.supplier_id;
+
+SELECT s.supplier_name, p.product_name
+FROM products p
+RIGHT JOIN suppliers s
+ON p.supplier_id = s.supplier_id;
+
+SELECT *
+FROM products
+WHERE supplier_id IS NULL;
+
+SELECT 
+    p.product_name,
+    c.category_name,
+    s.supplier_name
+FROM products p
+LEFT JOIN categories c ON p.category_id = c.category_id
+LEFT JOIN suppliers s ON p.supplier_id = s.supplier_id;
+
+SELECT p.product_name, s.contact_email
+FROM products p
+JOIN suppliers s
+ON p.supplier_id = s.supplier_id
+WHERE s.contact_email IS NOT NULL;
+
+SELECT DISTINCT c.category_name
+FROM products p
+JOIN categories c ON p.category_id = c.category_id
+JOIN suppliers s ON p.supplier_id = s.supplier_id
+WHERE s.supplier_name = 'Global Goods';
+
+
+-- e 
+Select count(*) from products;
+
+select category_id,count(*) 
+from products 
+group by category_id; 
+
+select product_name from products 
+where category_id =1 or category_id=3;
+
+select product_name ,sum(stock_quantity) as total_quantity
+from products 
+group by product_id;
+
+select product_name , avg(price)
+from products
+group by product_name;
